@@ -1,67 +1,89 @@
 """
-Configuration settings for SHEIN Verse Product Monitor Bot.
-Supports .env file for Termux compatibility.
+Configuration for SHEIN Verse Product Monitor Bot
+Works on Termux + Railway
+Compatible with python-telegram-bot v20+
 """
 
 import os
 from pathlib import Path
 
 # --------------------------------------------------
-# Load .env file
+# Load .env file (for Termux / local use)
+# Railway uses environment variables directly
 # --------------------------------------------------
 try:
     from dotenv import load_dotenv
-    env_path = Path('.') / '.env'
+    env_path = Path(".") / ".env"
     if env_path.exists():
         load_dotenv(dotenv_path=env_path)
         print("[CONFIG] Loaded .env file")
-except ImportError:
+except Exception:
     pass
 
 # --------------------------------------------------
-# TELEGRAM BOT CONFIGURATION
+# TELEGRAM CONFIGURATION
 # --------------------------------------------------
 
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+# Telegram Bot Token
+TELEGRAM_BOT_TOKEN = os.getenv(
+    "TELEGRAM_BOT_TOKEN",
+    "7201368733:AAG3Yp-E5g-DExLHEN-ETrv74zeqwuTIhNM"
+)
 
 if not TELEGRAM_BOT_TOKEN or ":" not in TELEGRAM_BOT_TOKEN:
-    raise RuntimeError("Invalid or missing TELEGRAM_BOT_TOKEN")
+    raise RuntimeError("Invalid TELEGRAM_BOT_TOKEN")
 
-# Multiple allowed users (admins)
-TELEGRAM_CHAT_IDS = os.environ.get(
+# Allowed Telegram User IDs (admins)
+TELEGRAM_CHAT_IDS = os.getenv(
     "TELEGRAM_CHAT_IDS",
-    "7194175926"
+    "7194175926,1950577113"
 ).split(",")
 
-# Clean IDs
-TELEGRAM_CHAT_IDS = [chat_id.strip() for chat_id in TELEGRAM_CHAT_IDS]
+TELEGRAM_CHAT_IDS = [cid.strip() for cid in TELEGRAM_CHAT_IDS]
 
 # --------------------------------------------------
-# SCRAPING CONFIGURATION
+# SCRAPER CONFIGURATION
 # --------------------------------------------------
 
-MAX_PRODUCTS = int(os.environ.get("MAX_PRODUCTS", "90"))
-CACHE_EXPIRY_MINUTES = int(os.environ.get("CACHE_EXPIRY_MINUTES", "10"))
-CHECK_INTERVAL_MINUTES = int(os.environ.get("CHECK_INTERVAL_MINUTES", "1"))
+# Maximum products to scrape per run
+MAX_PRODUCTS = int(os.getenv("MAX_PRODUCTS", "90"))
+
+# Interval between checks (minutes)
+CHECK_INTERVAL_MINUTES = int(os.getenv("CHECK_INTERVAL_MINUTES", "1"))
+
+# Cache expiry time (minutes)
+CACHE_EXPIRY_MINUTES = int(os.getenv("CACHE_EXPIRY_MINUTES", "10"))
 
 # --------------------------------------------------
-# HUMAN-LIKE DELAYS
+# HUMAN-LIKE DELAYS (seconds)
 # --------------------------------------------------
 
-DEFAULT_WAIT_MIN = 1.5
-DEFAULT_WAIT_MAX = 3.0
+DEFAULT_WAIT_MIN = float(os.getenv("DEFAULT_WAIT_MIN", "1.5"))
+DEFAULT_WAIT_MAX = float(os.getenv("DEFAULT_WAIT_MAX", "3.0"))
 
 # --------------------------------------------------
-# DATABASE
+# DATABASE CONFIGURATION
 # --------------------------------------------------
 
-DATABASE_PATH = "./shein_monitor.db"
+DATABASE_PATH = os.getenv(
+    "DATABASE_PATH",
+    "./shein_monitor.db"
+)
 
 # --------------------------------------------------
-# DEBUG INFO
+# LOGGING
 # --------------------------------------------------
 
-print("[CONFIG] Bot token loaded")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+# --------------------------------------------------
+# STARTUP DEBUG INFO
+# --------------------------------------------------
+
+print("[CONFIG] Token loaded ✔")
 print("[CONFIG] Allowed users:", TELEGRAM_CHAT_IDS)
 print("[CONFIG] Max products:", MAX_PRODUCTS)
-print("[CONFIG] Check interval (min):", CHECK_INTERVAL_MINUTES)
+print("[CONFIG] Check interval:", CHECK_INTERVAL_MINUTES, "minute(s)")
+print("[CONFIG] Cache expiry:", CACHE_EXPIRY_MINUTES, "minutes")
+print("[CONFIG] Database path:", DATABASE_PATH)
+print("[CONFIG] Log level:", LOG_LEVEL)
