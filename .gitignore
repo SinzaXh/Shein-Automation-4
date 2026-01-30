@@ -1,0 +1,20 @@
+# Environment & secrets
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments / local configs
+.venv/
+.config/
+.local/
+
+# Logs & cache
+*.log
+.cache/
+
+# OS junk
+.DS_Store
+

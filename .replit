@@ -1,0 +1,42 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["alsa-lib", "at-spi2-atk", "cairo", "chromium", "cups", "dbus", "expat", "geckodriver", "gitFull", "glib", "libdrm", "libxkbcommon", "mesa", "nspr", "nss", "pango", "playwright-driver", "xorg.libX11", "xorg.libXcomposite", "xorg.libXdamage", "xorg.libXext", "xorg.libXfixes", "xorg.libXrandr", "xorg.libxcb"]
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SHEIN Monitor Bot"
+
+[[workflows.workflow]]
+name = "SHEIN Monitor Bot"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python bot.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[userenv]
+
+[userenv.shared]
+PINCODES_TO_CHECK = "335704"
+PROXY_USERNAME = "203033"
+PROXY_PASSWORD = "JmNd95Z3vcX"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["python", "bot.py"]
